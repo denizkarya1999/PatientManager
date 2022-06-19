@@ -1,0 +1,92 @@
+﻿@page "/EditPatient/{Id:guid}"
+@using PatientManager.Shared
+@using PatientManager.Blazor.Services
+@using Microsoft.AspNetCore.Components;
+@inject IPatientService _patientService
+@inject NavigationManager NavigationManager
+
+<!-- Title of this page -->
+<PageTitle>Edit Patient</PageTitle>
+
+<!-- Header -->
+<h2>Edit Patient</h2>
+<hr />
+
+<!-- Part that is responsible for editing the patient -->
+<form>
+    <div class="row">
+        <div class="form-group">
+            <label for="Id" class="control-label">Patient Id</label>
+            <input form="Id" class="form-control" @bind="@_patient.Id" />
+        </div>
+        <p></p>
+        <div class="form-group">
+            <label for="FirstName" class="control-label">First Name</label>
+            <input form="FirstName" class="form-control" @bind="@_patient.FirstName" />
+        </div>
+        <p></p>
+        <div class="form-group">
+            <label for="LastName" class="control-label">Last Name</label>
+            <input form="LastName" class="form-control" @bind="@_patient.LastName" />
+        </div>
+        <p></p>
+        <div class="form-group">
+            <label for="Age" class="control-label">Age</label>
+            <input form="Age" class="form-control" @bind="@_patient.Age" />
+        </div>
+        <p></p>
+        <div class="form-group">
+            <label for="Diagnosis" class="control-label">Diagnosis</label>
+            <input form="Diagnosis" class="form-control" @bind="@_patient.Diagnosis" />
+        </div>
+        <div class="form-group">
+            <label for="DateAdmitted" class="control-label">Admission Date</label>
+            <input form="DateAdmitted" type="datetime-local" class="form-control" @bind="@_patient.DateAdmitted"></input>
+        </div>
+        <p></p>
+        <div class="form-group">
+            <input type="checkbox" id="html" name="treatment_status" @bind="@_patient.OnTreatment">
+            <label for="true">The patient is on treatment</label>
+        </div>
+        <p></p>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="button" class="btn btn-primary" @onclick="@UpdatePatient" value="Update" />
+                &nbsp;&nbsp;&nbsp;
+                <input type="button" class="btn btn-primary" @onclick="@Cancel" value="Cancel" />
+            </div>
+        </div>
+    </div>
+</form>
+
+
+@code {
+    //Parameter for Id
+    [Parameter]
+    public Guid Id { get; set; }
+
+    //Create an object for list of patients
+    PatientResponseDTO _patient = new PatientResponseDTO();
+
+    //Method to initialize the patient
+    protected override async Task OnInitializedAsync()
+    {
+        //Display the patient
+        _patient = await _patientService.GetPatientDetails(Id);
+    }
+
+    //This part is responsible for updating the patient
+    protected async void UpdatePatient()
+    {
+        await _patientService.UpdatePatient(_patient);
+        NavigationManager.NavigateTo("Patients");
+    }
+
+    //This part will navigate to patient
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("Patients");
+    }
+}

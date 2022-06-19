@@ -1,0 +1,84 @@
+﻿@page "/Delete/{Id:guid}"
+@using PatientManager.Shared
+@using PatientManager.Blazor.Services
+@using Microsoft.AspNetCore.Components;
+@inject IPatientService _patientService
+@inject NavigationManager NavigationManager
+
+<!-- Title of this page -->
+<PageTitle>Delete Patient</PageTitle>
+
+<!-- Ask whether you want to delete the specified patient or not (also give details) -->
+<h2>Delete Patient</h2>
+<hr />
+<h4>Are you sure want to delete this patient?</h4>
+<p></p>
+<form>
+    <div class="row">
+        <div class="form-group">
+            <label>Patient Id: </label>
+            <label><strong>@_patient.Id</strong></label>
+        </div>
+        <div class="form-group">
+            <label>First Name: </label>
+            <label><strong>@_patient.FirstName</strong></label>
+        </div>
+        <div class="form-group">
+            <label>Last Name: </label>
+            <label><strong>@_patient.LastName</strong></label>
+        </div>
+        <div class="form-group">
+            <label>Age: </label>
+            <label><strong>@_patient.Age</strong></label>
+        </div>
+        <div class="form-group">
+            <label>Diagnosis: </label>
+            <label><strong>@_patient.Diagnosis</strong></label>
+        </div>
+        <div class="form-group">
+            <label>Admission Date: </label>
+            <label><strong>@_patient.DateAdmitted</strong></label>
+        </div>
+        <div class="form-group">
+            <label>Treatment Status: </label>
+            <label><strong>@_patient.OnTreatment</strong></label>
+        </div>
+        <p></p>
+        <div class="row">
+            <div class="col-md-4">
+                <input type="button" class="btn btn-danger" @onclick="@DeletePatient" value="Delete" />
+                &nbsp;&nbsp;&nbsp;
+                <input type="button" class="btn btn-primary" @onclick="@Cancel" value="Cancel" />
+            </div>
+        </div>
+    </div>
+</form>
+
+@code {
+    //Parameter for Id
+    [Parameter]
+    public Guid Id { get; set; }
+
+    //Create an object for list of patients
+    PatientResponseDTO _patient = new PatientResponseDTO();
+
+    //Method to initialize the patient
+    protected override async Task OnInitializedAsync()
+    {
+        //Display the patient
+        _patient = await _patientService.GetPatientDetails(Id);
+    }
+
+    //Method to delete the patient
+    protected async void DeletePatient()
+    {
+        await _patientService.DeletePatient(Id);
+        NavigationManager.NavigateTo("Patients");
+    }
+
+    //This part will navigate to patient
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("Patients");
+    }
+}

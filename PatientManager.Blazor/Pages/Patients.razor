@@ -1,0 +1,69 @@
+﻿@page "/patients"
+@using PatientManager.Shared
+@using PatientManager.Blazor.Services
+@using Microsoft.AspNetCore.Components;
+@inject IPatientService _patientService
+
+<!-- Title of this page -->
+<PageTitle>Patients</PageTitle>
+
+<!-- Navigate to AddPatient page -->
+<NavLink class="nav-link" href="AddPatient">
+    <span class="oi oi-plus" aria-hidden="true"> Add</span>
+</NavLink>
+<p></p>
+
+<!-- Header -->
+<h1>Patients</h1>
+
+<!-- Part that is responsible for creating and filling the table -->
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Age</th>
+            <th>Diagnosis</th>
+            <th>Admission Date</th>
+            <th>Treatment Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (_patients is not null)
+        {
+            @foreach (var patient in _patients)
+            {
+                <tr>
+                    <td>@patient.Id</td>
+                    <td>@patient.FirstName</td>
+                    <td>@patient.LastName</td>
+                    <td>@patient.Age</td>
+                    <td>@patient.Diagnosis</td>
+                    <td>@patient.DateAdmitted</td>
+                    <td>@patient.OnTreatment</td>
+                    <td>
+                    <a class="nav-link" href="EditPatient/@patient.Id">
+                        <span class="oi oi-pencil" aria-hidden="true"> Edit</span>
+                    </a>
+                    <a class="nav-link" href="Delete/@patient.Id">
+                        <span class="oi oi-trash" aria-hidden="true"> Delete</span>
+                    </a>
+                </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@code {
+    //Create an object for list of patients
+    private IEnumerable<PatientResponseDTO> _patients;
+
+    //Method to initialize the list with GetAllPatients Method
+    protected override async Task OnInitializedAsync()
+    {
+        //Display all patients
+        _patients = await _patientService.GetAllPatients();
+    }
+}
